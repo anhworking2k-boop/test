@@ -39,22 +39,7 @@
             --shadow-lg: 0 20px 60px rgba(26,95,166,0.18);
             --transition: cubic-bezier(0.4, 0, 0.2, 1);
         }
-        /* Dark theme overrides */
-        html.dark-mode {
-            --primary: #0f4c91;
-            --primary-2: #083366;
-            --primary-3: #041e44;
-            --primary-glow: rgba(15,76,145,0.22);
-            --accent: #38bdf8;
-            --surface: #0a0a0a;
-            --surface-2: #111217;
-            --surface-3: #181c23;
-            --border: rgba(255,255,255,0.12);
-            --border-strong: rgba(255,255,255,0.25);
-            --text-1: #f1f5f9;
-            --text-2: #cbd5e1;
-            --text-3: #94a3b8;
-        }
+
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
@@ -1160,6 +1145,11 @@
             #header { top: 8px; width: calc(100% - 24px); }
             body { padding-top: 80px; }
             
+            /* Prevent Header Overflow */
+            .logo-sub { display: none; }
+            .btn-cta-header { display: none; }
+            .header-actions .icon-btn[title="Tìm kiếm"] { display: none; }
+
             /* Mobile Nav Toggle */
             .mobile-menu-btn { display: flex; align-items: center; justify-content: center; }
             .header-nav {
@@ -1200,9 +1190,7 @@
             .hero-btns { flex-direction: column; }
             .hero-stats { gap: 1.5rem; }
             .products-grid { grid-template-columns: 1fr; }
-            .logo-sub { display: none; }
             .logo-text { font-size: 1.2rem; }
-            .btn-cta-header { display: none; }
         }
 
         @keyframes slideDownNav {
@@ -1238,7 +1226,6 @@
             <!-- Actions -->
             <div class="header-actions">
                 <a href="#" class="icon-btn" title="Tìm kiếm"><i class="fa-solid fa-magnifying-glass"></i></a>
-                <button class="icon-btn toggle-dark" title="Đổi chế độ sáng tối" aria-label="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
                 <a href="#" class="icon-btn cart-wrap" title="Giỏ hàng">
                     <i class="fa-solid fa-bag-shopping"></i>
                     <span class="cart-badge" id="cart-count">0</span>
@@ -1647,18 +1634,7 @@
             document.getElementById('header').classList.toggle('scrolled', window.scrollY > 60);
         });
 
-        /* ── Dark mode handling ── */
-        const htmlEl = document.documentElement;
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        if (prefersDark) htmlEl.classList.add('dark-mode');
-        const toggleBtn = document.querySelector('.toggle-dark');
-        if (toggleBtn) {
-            toggleBtn.addEventListener('click', () => {
-                htmlEl.classList.toggle('dark-mode');
-                const isDark = htmlEl.classList.contains('dark-mode');
-                toggleBtn.innerHTML = isDark ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
-            });
-        }
+
 
 
 
