@@ -1,0 +1,13 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.DS_Store
+*.log
+uploads/
+*.db
+*.csv
+bing_test.html
+ddg_response.html
