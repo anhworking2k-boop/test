@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Outdated Website Finder - Dashboard</title>
+    <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-base: #0b0f19;
+            --bg-surface: rgba(17, 24, 39, 0.7);
+            --bg-card: rgba(31, 41, 55, 0.4);
+            --border-glow: rgba(59, 130, 246, 0.15);
+            --primary: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.35);
+            --secondary: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.08) 0px, transparent 50%);
+            background-attachment: fixed;
+            padding: 2rem 1.5rem;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Glassmorphism utility */
+        .glass-panel {
+            background: var(--bg-surface);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        /* HEADER SECTION */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 8px var(--primary-glow));
+        }
+
+        .logo-text h1 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-text p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* VIEW TOGGLE BUTTONS */
+        .view-toggle-container {
+            display: flex;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 4px;
+        }
+
+        .view-btn {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-weight: 700;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .view-btn.active {
+            background: linear-gradient(135deg, var(--primary), #2563eb);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+        }
+
+        /* STATS GRID */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition-smooth);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary);
+        }
+
+        .stat-card.stat-danger::before { background: var(--danger); }
+        .stat-card.stat-success::before { background: var(--secondary); }
+        .stat-card.stat-warning::before { background: var(--warning); }
+
+        .stat-info h3 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-info .stat-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            opacity: 0.15;
+            transition: var(--transition-smooth);
+        }
+
+        .stat-card:hover .stat-icon {
+            transform: scale(1.1);
+            opacity: 0.3;
+        }
+
+        /* TWO-COLUMN CONTENT AREA */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 420px 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* SCAN CONTROL PANEL */
+        .control-panel {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .panel-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 0.75rem;
+        }
+
+        .tabs-header {
+            display: flex;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 4px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            width: 100%;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 0.6rem;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .input-control {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: var(--transition-smooth);
+            outline: none;
+        }
+
+        .input-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px var(--primary-glow);
+        }
+
+        textarea.input-control {
+            height: 120px;
+            resize: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+
+        /* CUSTOM UPLOAD BOX */
+        .upload-area {
+            border: 2px dashed rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 2rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.01);
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: rgba(59, 130, 246, 0.03);
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            color: var(--text-muted);
+            transition: var(--transition-smooth);
+        }
+
+        .upload-area:hover .upload-icon {
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .upload-text {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .upload-subtext {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .file-selected-name {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            margin-top: 0.5rem;
+        }
+
+        .info-tip {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.4rem;
+            background: rgba(59, 130, 246, 0.05);
+            border: 1px dashed rgba(59, 130, 246, 0.2);
+            padding: 0.75rem;
+            border-radius: 8px;
+        }
+
+        .btn-scan {
+            background: linear-gradient(135deg, var(--primary), #2563eb);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.9rem;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            width: 100%;
+        }
+
+        .btn-scan:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.45);
+        }
+
+        .btn-scan:disabled {
+            background: #4b5563;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* RESULTS VIEW PANEL */
+        .results-panel {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 0.75rem;
+        }
+
+        .panel-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .filter-buttons {
+            display: flex;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 4px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .filter-btn.active {
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+        }
+
+        .search-box {
+            position: relative;
+            min-width: 250px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .search-box input {
+            width: 100%;
+            padding-left: 2.5rem;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: rgba(17, 24, 39, 0.8);
+            padding: 1rem 1.25rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        th:hover {
+            color: var(--text-main);
+        }
+
+        th.sort-active i {
+            color: var(--primary);
+        }
+
+        td {
+            padding: 1.25rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr.row-main {
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        tr.row-main:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        tr.row-main.expanded {
+            background: rgba(59, 130, 246, 0.03);
+        }
+
+        .business-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .business-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #ffffff;
+        }
+
+        .business-address {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            max-width: 320px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* BADGES */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .badge-success { background: rgba(16, 185, 129, 0.15); color: var(--secondary); border: 1px solid rgba(16, 185, 129, 0.2); }
+        .badge-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
+        .badge-warning { background: rgba(245, 158, 11, 0.15); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.2); }
+        
+        .score-circle {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.9rem;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .score-critical { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 2px solid #ef4444; }
+        .score-warning { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 2px solid #f59e0b; }
+        .score-minor { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 2px solid #10b981; }
+
+        .btn-action {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.4rem;
+            border-radius: 6px;
+            transition: var(--transition-smooth);
+            font-size: 0.9rem;
+        }
+
+        .btn-action:hover {
+            color: var(--danger);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .btn-action.btn-redesign:hover {
+            color: var(--primary);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        /* DETAIL PANEL ROW */
+        tr.row-detail {
+            display: none;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        tr.row-detail.active {
+            display: table-row;
+        }
+
+        .detail-card {
+            padding: 1.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .detail-group h4 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-group p {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .detail-tech-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* SPINNER & LOADING MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(11, 15, 25, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-card {
+            max-width: 450px;
+            width: 90%;
+            padding: 2.5rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(59, 130, 246, 0.1);
+            border-left-color: var(--primary);
+            border-radius: 50%;
+            margin: 0 auto;
+            animation: spin 1s linear infinite;
+        }
+
+        .scanning-animation {
+            font-size: 1.1rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #ffffff, var(--text-muted), #ffffff);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 2s linear infinite;
+        }
+
+        /* KEYFRAMES */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.5; }
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes shine {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <!-- HEADER -->
+    <header class="glass-panel">
+        <div class="logo-area">
+            <i class="fa-solid fa-radar logo-icon"></i>
+            <div class="logo-text">
+                <h1>Outdated Website Finder</h1>
+                <p>Hệ thống săn tìm khách hàng thiết kế lại & xây mới website</p>
+            </div>
+        </div>
+        
+        <div class="view-toggle-container">
+            <button class="view-btn active" id="view-mode-websites" onclick="switchViewMode('websites')">
+                <i class="fa-solid fa-globe"></i> Website Lỗi Thời
+            </button>
+            <button class="view-btn" id="view-mode-leads" onclick="switchViewMode('leads')">
+                <i class="fa-solid fa-map-location-dot"></i> Khách Hàng Google Maps
+            </button>
+        </div>
+        
+        <div class="status-badge">
+            <div class="status-dot"></div>
+            <span>Connected to Local Server</span>
+        </div>
+    </header>
+
+    <!-- STATS (WEBSITES VIEW) -->
+    <div class="stats-grid" id="stats-websites-grid">
+        <div class="glass-panel stat-card">
+            <div class="stat-info">
+                <h3>Tổng số Website</h3>
+                <div class="stat-value" id="stat-total">0</div>
+            </div>
+            <i class="fa-solid fa-globe stat-icon"></i>
+        </div>
+        <div class="glass-panel stat-card stat-danger">
+            <div class="stat-info">
+                <h3>Tiềm năng Đỏ (≥ 70đ)</h3>
+                <div class="stat-value" id="stat-critical">0</div>
+            </div>
+            <i class="fa-solid fa-fire stat-icon" style="color: var(--danger)"></i>
+        </div>
+        <div class="glass-panel stat-card stat-warning">
+            <div class="stat-info">
+                <h3>Không Responsive</h3>
+                <div class="stat-value" id="stat-non-responsive">0</div>
+            </div>
+            <i class="fa-solid fa-mobile-screen-button stat-icon" style="color: var(--warning)"></i>
+        </div>
+        <div class="glass-panel stat-card stat-success">
+            <div class="stat-info">
+                <h3>Không có SSL</h3>
+                <div class="stat-value" id="stat-no-ssl">0</div>
+            </div>
+            <i class="fa-solid fa-lock-open stat-icon" style="color: var(--secondary)"></i>
+        </div>
+    </div>
+
+    <!-- STATS (LEADS VIEW - HIDDEN BY DEFAULT) -->
+    <div class="stats-grid" id="stats-leads-grid" style="display: none;">
+        <div class="glass-panel stat-card">
+            <div class="stat-info">
+                <h3>Tổng số Doanh Nghiệp</h3>
+                <div class="stat-value" id="lead-total">0</div>
+            </div>
+            <i class="fa-solid fa-map-pin stat-icon"></i>
+        </div>
+        <div class="glass-panel stat-card stat-warning">
+            <div class="stat-info">
+                <h3>Chưa có Website</h3>
+                <div class="stat-value" id="lead-no-web">0</div>
+            </div>
+            <i class="fa-solid fa-globe-slash stat-icon" style="color: var(--warning)"></i>
+        </div>
+        <div class="glass-panel stat-card stat-danger">
+            <div class="stat-info">
+                <h3>Web Hỏng/Chết</h3>
+                <div class="stat-value" id="lead-dead-web">0</div>
+            </div>
+            <i class="fa-solid fa-circle-exclamation stat-icon" style="color: var(--danger)"></i>
+        </div>
+        <div class="glass-panel stat-card stat-success">
+            <div class="stat-info">
+                <h3>Web Cần Redesign</h3>
+                <div class="stat-value" id="lead-outdated-web">0</div>
+            </div>
+            <i class="fa-solid fa-palette stat-icon" style="color: var(--secondary)"></i>
+        </div>
+    </div>
+
+    <!-- MAIN TWO-COLUMN LAYOUT -->
+    <div class="main-layout">
+        
+        <!-- LEFT: SCAN CONTROLS -->
+        <div class="glass-panel control-panel">
+            <div class="panel-title">
+                <i class="fa-solid fa-bolt"></i>
+                <h2 id="control-panel-title">Bắt đầu Quét Mới</h2>
+            </div>
+            
+            <div class="tabs-header" id="control-tabs-header">
+                <button class="tab-btn active" onclick="switchTab('tab-domains')">
+                    <i class="fa-solid fa-list"></i> Nhập Domain
+                </button>
+                <button class="tab-btn" onclick="switchTab('tab-search')">
+                    <i class="fa-solid fa-magnifying-glass"></i> Google Dork
+                </button>
+            </div>
+
+            <!-- TAB 1: DOMAINS INPUT (WEBSITES VIEW) -->
+            <div class="tab-content active" id="tab-domains">
+                <div class="form-group">
+                    <label class="form-label">Danh sách tên miền Việt Nam:</label>
+                    <textarea class="input-control" id="domains-input" placeholder="mcovietnam.com.vn&#10;vietnamhotel.org.vn&#10;thegioiseo.com"></textarea>
+                </div>
+                <div class="info-tip">
+                    <i class="fa-solid fa-circle-info" style="color: var(--primary); margin-top: 1px;"></i>
+                    <span>Tên miền Việt Nam kết thúc bằng đuôi .vn hoặc .com.vn. Hệ thống tự động lọc các tên miền nước ngoài và các web bị chết.</span>
+                </div>
+                <button class="btn-scan" id="btn-scan-trigger" onclick="executeScan()">
+                    <i class="fa-solid fa-rotate"></i> Bắt đầu Phân Tích
+                </button>
+            </div>
+
+            <!-- TAB 2: DORK SEARCH (WEBSITES VIEW) -->
+            <div class="tab-content" id="tab-search">
+                <div class="form-group">
+                    <label class="form-label">Cú pháp Dork:</label>
+                    <input type="text" class="input-control" id="search-input" value='site:.vn "© 2012" du lich' placeholder='site:.vn "© 2012" cafe'>
+                </div>
+                <div class="info-tip">
+                    <i class="fa-solid fa-triangle-exclamation" style="color: var(--warning); margin-top: 1px;"></i>
+                    <span>Tính năng này quét DuckDuckGo. Nếu bị chặn CAPTCHA, hãy tự nhập trực tiếp danh sách tên miền ở Tab bên cạnh.</span>
+                </div>
+                <button class="btn-scan" id="btn-scan-trigger-search" onclick="executeScan()">
+                    <i class="fa-solid fa-rotate"></i> Bắt đầu Phân Tích
+                </button>
+            </div>
+
+            <!-- TAB 3: GOOGLE MAPS UPLOAD (LEADS VIEW - ACTIVE WHEN SWITCED) -->
+            <div class="tab-content" id="tab-maps" style="display: none;">
+                <div class="form-group">
+                    <label class="form-label">Tải lên file xuất dữ liệu Google Maps (.csv):</label>
+                    <div class="upload-area" onclick="document.getElementById('file-input-raw').click()">
+                        <i class="fa-solid fa-file-csv upload-icon"></i>
+                        <span class="upload-text">Nhấp vào đây để chọn file CSV</span>
+                        <span class="upload-subtext">Hỗ trợ các file xuất từ Chrome Extension Scraper</span>
+                        <input type="file" id="file-input-raw" accept=".csv" style="display: none;" onchange="handleFileSelection(event)">
+                    </div>
+                    <div id="selected-file-display" style="display: none;"></div>
+                </div>
+                <div class="info-tip">
+                    <i class="fa-solid fa-lightbulb" style="color: var(--warning); margin-top: 1px;"></i>
+                    <span>Hệ thống tự động phát hiện cột Tên, SĐT, Website, Địa chỉ. Tự động loại bỏ các doanh nghiệp ở nước ngoài và phân loại cơ hội cho bạn.</span>
+                </div>
+                <button class="btn-scan" id="btn-scan-leads" onclick="uploadLeadsCsv()" disabled>
+                    <i class="fa-solid fa-upload"></i> Tải Lên & Phân Tích Leads
+                </button>
+            </div>
+            
+        </div>
+
+        <!-- RIGHT: RESULTS LIST -->
+        <div class="glass-panel results-panel">
+            
+            <!-- VIEW 1: WEBSITES RESULTS -->
+            <div id="panel-websites-view">
+                <div class="results-header">
+                    <div class="panel-title" style="border: none; padding: 0;">
+                        <i class="fa-solid fa-table-list"></i>
+                        <h2>Danh sách Website Lỗi Thời Việt Nam</h2>
+                    </div>
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" class="input-control" id="table-search" placeholder="Tìm tên miền, tiêu đề..." onkeyup="filterTable()">
+                    </div>
+                </div>
+
+                <div class="table-container" style="margin-top: 1rem;">
+                    <table id="results-table">
+                        <thead>
+                            <tr>
+                                <th onclick="sortTable(0)">Website / Tiêu đề <i class="fa-solid fa-sort"></i></th>
+                                <th onclick="sortTable(1)">Responsive <i class="fa-solid fa-sort"></i></th>
+                                <th onclick="sortTable(2)">SSL <i class="fa-solid fa-sort"></i></th>
+                                <th onclick="sortTable(3)">Copyright <i class="fa-solid fa-sort"></i></th>
+                                <th onclick="sortTable(4)" style="text-align: center;">Điểm Lỗi Thời <i class="fa-solid fa-sort"></i></th>
+                                <th style="text-align: center;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body">
+                            <!-- Loaded via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- VIEW 2: GOOGLE MAPS LEADS (HIDDEN BY DEFAULT) -->
+            <div id="panel-leads-view" style="display: none;">
+                <div class="results-header">
+                    <div class="panel-title" style="border: none; padding: 0;">
+                        <i class="fa-solid fa-address-book"></i>
+                        <h2>Cơ hội kinh doanh từ Google Maps</h2>
+                    </div>
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" class="input-control" id="leads-search" placeholder="Tìm tên, SĐT, địa chỉ..." onkeyup="filterLeadsTable()">
+                    </div>
+                </div>
+
+                <div class="panel-controls" style="margin-top: 1rem;">
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <div class="filter-buttons">
+                            <button class="filter-btn active" id="lead-filter-all" onclick="filterLeadsByType('all')">Tất cả</button>
+                            <button class="filter-btn" id="lead-filter-noweb" onclick="filterLeadsByType('No Website')">Cần Làm Web Mới</button>
+                            <button class="filter-btn" id="lead-filter-dead" onclick="filterLeadsByType('Dead Website')">Cần Sửa Web Hỏng</button>
+                            <button class="filter-btn" id="lead-filter-outdated" onclick="filterLeadsByType('Outdated Website')">Cần Redesign</button>
+                        </div>
+                        
+                        <select class="input-control" id="lead-category-filter" onchange="filterLeadsByCategory()" style="padding: 0.5rem 1.0rem; font-size: 0.8rem; height: auto;">
+                            <option value="all">Tất cả các ngách</option>
+                            <option value="Khách sạn / Homestay">Khách sạn / Homestay</option>
+                            <option value="Nha khoa / Spa">Nha khoa / Spa</option>
+                            <option value="Dịch vụ tại nhà">Dịch vụ tại nhà</option>
+                            <option value="Luật / Kế toán">Luật / Kế toán</option>
+                            <option value="Giáo dục / Trung tâm">Giáo dục / Trung tâm</option>
+                            <option value="Studio ảnh cưới">Studio ảnh cưới</option>
+                            <option value="Khác">Khác</option>
+                        </select>
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">
+                        Được tự động sắp xếp theo cơ hội cao nhất lên đầu
+                    </div>
+                </div>
+
+                <div class="table-container" style="margin-top: 1rem;">
+                    <table id="leads-table">
+                        <thead>
+                            <tr>
+                                <th>Doanh Nghiệp / Địa Chỉ</th>
+                                <th>Ngách</th>
+                                <th>Thông tin Liên hệ</th>
+                                <th>Website Hiện tại</th>
+                                <th>Phân Loại</th>
+                                <th style="text-align: center;">Ưu Tiên</th>
+                                <th style="text-align: center;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leads-table-body">
+                            <!-- Loaded via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+        </div>
+
+    </div>
+
+</div>
+
+<!-- LOADING MODAL -->
+<div class="modal" id="loading-modal">
+    <div class="glass-panel modal-card">
+        <div class="spinner"></div>
+        <div class="scanning-animation" id="modal-status-text">Đang phân tích dữ liệu...</div>
+        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">
+            Hệ thống đang tiến hành rà soát thông tin doanh nghiệp, gửi yêu cầu kiểm tra HTML, CSS, và phân loại dữ liệu Việt Nam. Quá trình này có thể mất chút thời gian tùy thuộc vào số lượng tên miền.
+        </p>
+    </div>
+</div>
+
+<script>
+    let resultsData = [];
+    let leadsData = [];
+    
+    // Website sorting
+    let currentSortColumn = -1;
+    let currentSortDirection = true;
+    
+    // Lead filters
+    let currentLeadFilterType = 'all';
+
+    document.addEventListener("DOMContentLoaded", () => {
+        loadDashboardData();
+        loadLeadsData();
+    });
+
+    // Chuyển đổi giữa chế độ xem Website Flipped vs Google Maps Leads
+    function switchViewMode(mode) {
+        document.getElementById('view-mode-websites').classList.remove('active');
+        document.getElementById('view-mode-leads').classList.remove('active');
+        
+        document.getElementById('stats-websites-grid').style.display = 'none';
+        document.getElementById('stats-leads-grid').style.display = 'none';
+        
+        document.getElementById('panel-websites-view').style.display = 'none';
+        document.getElementById('panel-leads-view').style.display = 'none';
+        
+        // Hide/Show tab controls
+        document.getElementById('control-tabs-header').style.display = 'none';
+        document.getElementById('tab-domains').style.display = 'none';
+        document.getElementById('tab-search').style.display = 'none';
+        document.getElementById('tab-maps').style.display = 'none';
+
+        if (mode === 'websites') {
+            document.getElementById('view-mode-websites').classList.add('active');
+            document.getElementById('stats-websites-grid').style.display = 'grid';
+            document.getElementById('panel-websites-view').style.display = 'block';
+            
+            document.getElementById('control-panel-title').innerText = "Bắt đầu Quét Mới";
+            document.getElementById('control-tabs-header').style.display = 'flex';
+            
+            // Activate domains tab
+            document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
+            document.querySelector('.tab-btn:nth-child(2)').classList.remove('active');
+            document.getElementById('tab-domains').style.display = 'flex';
+        } else {
+            document.getElementById('view-mode-leads').classList.add('active');
+            document.getElementById('stats-leads-grid').style.display = 'grid';
+            document.getElementById('panel-leads-view').style.display = 'block';
+            
+            document.getElementById('control-panel-title').innerText = "Tải File Google Maps";
+            document.getElementById('tab-maps').style.display = 'flex';
+        }
+    }
+
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
+        
+        if (tabId === 'tab-domains') {
+            document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
+        } else {
+            document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
+        }
+        document.getElementById(tabId).style.display = 'flex';
+    }
+
+    // --- WEBSITE SCANNER LOGIC ---
+
+    async function loadDashboardData() {
+        try {
+            const response = await fetch('/api/results');
+            resultsData = await response.json();
+            renderStats();
+            renderTable(resultsData);
+        } catch (error) {
+            console.error("Lỗi tải kết quả website:", error);
+        }
+    }
+
+    function renderStats() {
+        document.getElementById('stat-total').innerText = resultsData.length;
+        
+        const critical = resultsData.filter(r => r.score >= 70).length;
+        document.getElementById('stat-critical').innerText = critical;
+        
+        const nonResponsive = resultsData.filter(r => r.responsive === 'No').length;
+        document.getElementById('stat-non-responsive').innerText = nonResponsive;
+        
+        const noSsl = resultsData.filter(r => r.ssl === 'No').length;
+        document.getElementById('stat-no-ssl').innerText = noSsl;
+    }
+
+    function renderTable(data) {
+        const tbody = document.getElementById('table-body');
+        tbody.innerHTML = '';
+        
+        if (data.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">Không có website Việt Nam nào. Hãy nhập domain để bắt đầu quét!</td></tr>`;
+            return;
+        }
+
+        data.forEach((row, index) => {
+            const trMain = document.createElement('tr');
+            trMain.className = 'row-main';
+            trMain.setAttribute('onclick', `toggleDetails(${index})`);
+            trMain.id = `row-main-${index}`;
+            
+            let scoreClass = 'score-minor';
+            if (row.score >= 70) scoreClass = 'score-critical';
+            else if (row.score >= 50) scoreClass = 'score-warning';
+
+            trMain.innerHTML = `
+                <td>
+                    <div class="domain-cell">
+                        <span class="domain-name">${row.domain}</span>
+                        <span class="domain-title" title="${row.title}">${row.title}</span>
+                    </div>
+                </td>
+                <td>
+                    <span class="badge ${row.responsive === 'Yes' ? 'badge-success' : 'badge-danger'}">
+                        ${row.responsive === 'Yes' ? '<i class="fa-solid fa-circle-check"></i> Có' : '<i class="fa-solid fa-circle-xmark"></i> Không'}
+                    </span>
+                </td>
+                <td>
+                    <span class="badge ${row.ssl === 'Yes' ? 'badge-success' : 'badge-danger'}">
+                        ${row.ssl === 'Yes' ? '<i class="fa-solid fa-shield"></i> SSL' : '<i class="fa-solid fa-circle-exclamation"></i> Không'}
+                    </span>
+                </td>
+                <td>
+                    <span style="font-weight: 600; color: ${row.copyright_years !== 'N/A' && (2026 - parseInt(row.copyright_years)) > 5 ? 'var(--warning)' : 'inherit'};">
+                        ${row.copyright_years}
+                    </span>
+                </td>
+                <td style="display: flex; justify-content: center; align-items: center;">
+                    <div class="score-circle ${scoreClass}">${row.score}</div>
+                </td>
+                <td style="text-align: center;" onclick="event.stopPropagation();">
+                    <button class="btn-action btn-redesign" onclick="startRedesign('${row.domain}')" title="Tạo Kịch bản Redesign">
+                        <i class="fa-solid fa-palette"></i>
+                    </button>
+                    <button class="btn-action" onclick="deleteDomain('${row.domain}')" title="Xóa">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </td>
+            `;
+
+            const trDetail = document.createElement('tr');
+            trDetail.className = 'row-detail';
+            trDetail.id = `row-detail-${index}`;
+            
+            let techListHtml = '';
+            if (row.jquery_version !== 'N/A') {
+                techListHtml += `<span class="detail-tech-badge">jQuery ${row.jquery_version}</span>`;
+            }
+            if (row.table_layout === 'Yes') {
+                techListHtml += `<span class="detail-tech-badge">Table Layout</span>`;
+            }
+            if (row.obsolete_tags !== 'None') {
+                row.obsolete_tags.split(', ').forEach(t => {
+                    techListHtml += `<span class="detail-tech-badge" style="color: var(--danger)">Thẻ cổ: &lt;${t}&gt;</span>`;
+                });
+            }
+            if (!techListHtml) {
+                techListHtml = '<span class="detail-tech-badge">Không phát hiện công nghệ lỗi thời</span>';
+            }
+
+            trDetail.innerHTML = `
+                <td colspan="6" style="padding: 0;">
+                    <div class="detail-card">
+                        <div class="detail-group" style="grid-column: span 2;">
+                            <h4>Địa chỉ đầy đủ</h4>
+                            <p><a href="${row.url}" target="_blank" style="color: var(--primary); text-decoration: none;">${row.url} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.75rem;"></i></a></p>
+                        </div>
+                        <div class="detail-group">
+                            <h4>Công nghệ phát hiện</h4>
+                            <div>${techListHtml}</div>
+                        </div>
+                        <div class="detail-group" style="grid-column: span 2;">
+                            <h4>Ghi Chú Đánh Giá</h4>
+                            <p style="color: var(--warning); line-height: 1.4;">${row.notes || 'Không có ghi chú nào khác.'}</p>
+                        </div>
+                    </div>
+                </td>
+            `;
+
+            tbody.appendChild(trMain);
+            tbody.appendChild(trDetail);
+        });
+    }
+
+    function toggleDetails(index) {
+        const rowMain = document.getElementById(`row-main-${index}`);
+        const rowDetail = document.getElementById(`row-detail-${index}`);
+        const wasActive = rowDetail.classList.contains('active');
+        
+        document.querySelectorAll('.row-detail').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.row-main').forEach(el => el.classList.remove('expanded'));
+        
+        if (!wasActive) {
+            rowDetail.classList.add('active');
+            rowMain.classList.add('expanded');
+        }
+    }
+
+    async function executeScan() {
+        const btn = document.getElementById('btn-scan-trigger');
+        const modal = document.getElementById('loading-modal');
+        const activeTab = document.querySelector('.tab-btn.active');
+        
+        let requestPayload = {};
+        
+        if (activeTab.innerText.includes("Nhập Domain")) {
+            const rawDomains = document.getElementById('domains-input').value.trim();
+            if (!rawDomains) {
+                alert("Vui lòng nhập ít nhất 1 tên miền để quét.");
+                return;
+            }
+            const list = rawDomains.split('\n').map(d => d.trim()).filter(d => d.length > 0);
+            requestPayload = { type: 'domains', domains: list };
+        } else {
+            const queryVal = document.getElementById('search-input').value.trim();
+            if (!queryVal) {
+                alert("Vui lòng nhập từ khóa Dork.");
+                return;
+            }
+            requestPayload = { type: 'query', query: queryVal };
+        }
+
+        document.getElementById('modal-status-text').innerText = "Đang quét và phân tích website...";
+        btn.disabled = true;
+        modal.classList.add('active');
+        
+        try {
+            const response = await fetch('/api/scan', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestPayload)
+            });
+            const data = await response.json();
+            
+            if (data.success) {
+                resultsData = data.all;
+                renderStats();
+                renderTable(resultsData);
+                alert(data.message);
+            } else {
+                alert("Lỗi: " + data.message);
+            }
+        } catch (error) {
+            console.error("Lỗi khi quét:", error);
+            alert("Lỗi kết nối tới máy chủ.");
+        } finally {
+            btn.disabled = false;
+            modal.classList.remove('active');
+        }
+    }
+
+    async function deleteDomain(domain) {
+        if (!confirm(`Bạn có chắc chắn muốn xóa tên miền ${domain} khỏi danh sách?`)) {
+            return;
+        }
+        try {
+            const response = await fetch(`/api/results/${domain}`, { method: 'DELETE' });
+            const data = await response.json();
+            if (data.success) {
+                resultsData = resultsData.filter(r => r.domain !== domain);
+                renderStats();
+                renderTable(resultsData);
+            } else {
+                alert(data.message);
+            }
+        } catch (error) {
+            console.error("Lỗi xóa:", error);
+        }
+    }
+
+    function filterTable() {
+        const query = document.getElementById('table-search').value.toLowerCase().trim();
+        if (!query) {
+            renderTable(resultsData);
+            return;
+        }
+        
+        const filtered = resultsData.filter(row => 
+            row.domain.toLowerCase().includes(query) || 
+            row.title.toLowerCase().includes(query)
+        );
+        renderTable(filtered);
+    }
+
+    function sortTable(colIndex) {
+        if (currentSortColumn === colIndex) {
+            currentSortDirection = !currentSortDirection;
+        } else {
+            currentSortColumn = colIndex;
+            currentSortDirection = true;
+        }
+
+        const ths = document.querySelectorAll('#results-table th');
+        ths.forEach((th, idx) => {
+            th.classList.remove('sort-active');
+            const icon = th.querySelector('i');
+            if (icon) icon.className = 'fa-solid fa-sort';
+            if (idx === colIndex) {
+                th.classList.add('sort-active');
+                if (icon) {
+                    icon.className = currentSortDirection ? 'fa-solid fa-sort-up' : 'fa-solid fa-sort-down';
+                }
+            }
+        });
+
+        resultsData.sort((a, b) => {
+            let valA, valB;
+            switch (colIndex) {
+                case 0:
+                    valA = a.domain.toLowerCase();
+                    valB = b.domain.toLowerCase();
+                    break;
+                case 1:
+                    valA = a.responsive;
+                    valB = b.responsive;
+                    break;
+                case 2:
+                    valA = a.ssl;
+                    valB = b.ssl;
+                    break;
+                case 3:
+                    valA = a.copyright_years === 'N/A' ? 0 : parseInt(a.copyright_years);
+                    valB = b.copyright_years === 'N/A' ? 0 : parseInt(b.copyright_years);
+                    break;
+                case 4:
+                    valA = a.score;
+                    valB = b.score;
+                    break;
+                default:
+                    return 0;
+            }
+
+            if (valA < valB) return currentSortDirection ? -1 : 1;
+            if (valA > valB) return currentSortDirection ? 1 : -1;
+            return 0;
+        });
+
+        renderTable(resultsData);
+    }
+
+    function startRedesign(domain) {
+        alert(`Bắt đầu soạn thảo kịch bản Redesign cho doanh nghiệp sở hữu ${domain}. Giao diện mới sẽ được tối ưu trên di động và tích hợp SSL bảo mật.`);
+    }
+
+    // --- GOOGLE MAPS LEADS LOGIC ---
+
+    async function loadLeadsData() {
+        try {
+            const response = await fetch('/api/leads');
+            leadsData = await response.json();
+            renderLeadsStats();
+            renderLeadsTable(leadsData);
+        } catch (error) {
+            console.error("Lỗi khi tải leads:", error);
+        }
+    }
+
+    function renderLeadsStats() {
+        document.getElementById('lead-total').innerText = leadsData.length;
+        
+        const noWeb = leadsData.filter(l => l.type === 'No Website').length;
+        document.getElementById('lead-no-web').innerText = noWeb;
+        
+        const deadWeb = leadsData.filter(l => l.type === 'Dead Website').length;
+        document.getElementById('lead-dead-web').innerText = deadWeb;
+        
+        const outdated = leadsData.filter(l => l.type === 'Outdated Website').length;
+        document.getElementById('lead-outdated-web').innerText = outdated;
+    }
+
+    function renderLeadsTable(data) {
+        const tbody = document.getElementById('leads-table-body');
+        tbody.innerHTML = '';
+        
+        if (data.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">Không có danh sách khách hàng tiềm năng. Vui lòng tải lên file CSV từ Google Maps ở bảng bên trái.</td></tr>`;
+            return;
+        }
+
+        data.forEach((row, index) => {
+            const tr = document.createElement('tr');
+            
+            // Badge type style
+            let typeBadgeHtml = '';
+            if (row.type === 'No Website') {
+                typeBadgeHtml = '<span class="badge badge-warning"><i class="fa-solid fa-folder-plus"></i> Làm Web Mới</span>';
+            } else if (row.type === 'Dead Website') {
+                typeBadgeHtml = '<span class="badge badge-danger"><i class="fa-solid fa-triangle-exclamation"></i> Sửa Web Hỏng</span>';
+            } else if (row.type === 'Outdated Website') {
+                typeBadgeHtml = '<span class="badge badge-success" style="background: rgba(16, 185, 129, 0.15); color: var(--secondary);"><i class="fa-solid fa-paint-brush"></i> Cần Redesign</span>';
+            } else {
+                typeBadgeHtml = '<span class="badge" style="background: rgba(255, 255, 255, 0.05); color: var(--text-muted);">Hiện Đại</span>';
+            }
+            
+            // Badge score
+            let scoreClass = 'score-minor';
+            if (row.score >= 80) scoreClass = 'score-critical';
+            else if (row.score >= 50) scoreClass = 'score-warning';
+
+            tr.innerHTML = `
+                <td>
+                    <div class="business-cell">
+                        <span class="business-name">${row.name}</span>
+                        <span class="business-address" title="${row.address}">${row.address || 'Không rõ địa chỉ'}</span>
+                    </div>
+                </td>
+                <td style="font-weight: 600; font-size: 0.85rem; color: var(--text-muted);">${row.category || 'Khác'}</td>
+                <td>
+                    <div style="font-weight: 700; color: #ffffff;">
+                        ${row.phone ? `<i class="fa-solid fa-phone" style="color: var(--secondary); font-size: 0.8rem; margin-right: 0.3rem;"></i> ${row.phone}` : '<span style="color: var(--text-muted); font-weight: normal; font-style: italic;">Chưa cập nhật SĐT</span>'}
+                    </div>
+                </td>
+                <td>
+                    ${row.website && row.website !== 'N/A' && row.website !== 'None' ? 
+                        `<a href="${row.website}" target="_blank" style="color: var(--primary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">
+                            ${row.website.replace('http://', '').replace('https://', '').split('/')[0]} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.7rem; margin-left: 0.2rem;"></i>
+                        </a>` : 
+                        '<span style="color: var(--text-muted); font-size: 0.85rem;">Không có</span>'
+                    }
+                </td>
+                <td>${typeBadgeHtml}</td>
+                <td style="display: flex; justify-content: center; align-items: center; border-bottom: none; height: 100%;">
+                    <div class="score-circle ${scoreClass}">${row.score}</div>
+                </td>
+                <td style="text-align: center;">
+                    <button class="btn-action btn-redesign" onclick="offerService('${row.name}', '${row.phone}', '${row.type}')" title="Chào mời Dịch vụ">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                    <button class="btn-action" onclick="deleteLead('${row.name}')" title="Xóa khách hàng">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function handleFileSelection(event) {
+        const file = event.target.files[0];
+        const display = document.getElementById('selected-file-display');
+        const btn = document.getElementById('btn-scan-leads');
+        
+        if (file) {
+            display.innerHTML = `<div class="file-selected-name"><i class="fa-solid fa-file-csv"></i> ${file.name} (${(file.size / 1024).toFixed(1)} KB)</div>`;
+            display.style.display = 'block';
+            btn.disabled = false;
+        } else {
+            display.style.display = 'none';
+            btn.disabled = true;
+        }
+    }
+
+    async function uploadLeadsCsv() {
+        const fileInput = document.getElementById('file-input-raw');
+        const file = fileInput.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const modal = document.getElementById('loading-modal');
+        document.getElementById('modal-status-text').innerText = "Đang tải lên và phân loại danh sách Google Maps...";
+        modal.classList.add('active');
+
+        try {
+            const response = await fetch('/api/leads/upload', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+            
+            if (data.success) {
+                leadsData = data.leads;
+                renderLeadsStats();
+                renderLeadsTable(leadsData);
+                alert(data.message);
+                
+                // Clear file input
+                fileInput.value = '';
+                document.getElementById('selected-file-display').style.display = 'none';
+                document.getElementById('btn-scan-leads').disabled = true;
+            } else {
+                alert("Lỗi tải file: " + data.message);
+            }
+        } catch (error) {
+            console.error("Lỗi upload file:", error);
+            alert("Lỗi kết nối tới máy chủ.");
+        } finally {
+            modal.classList.remove('active');
+        }
+    }
+
+    async function deleteLead(name) {
+        if (!confirm(`Bạn có chắc chắn muốn xóa doanh nghiệp "${name}" khỏi cơ hội liên hệ?`)) {
+            return;
+        }
+        try {
+            const response = await fetch(`/api/leads/${encodeURIComponent(name)}`, { method: 'DELETE' });
+            const data = await response.json();
+            if (data.success) {
+                leadsData = leadsData.filter(l => l.name !== name);
+                renderLeadsStats();
+                renderLeadsTable(leadsData);
+            } else {
+                alert(data.message);
+            }
+        } catch (error) {
+            console.error("Lỗi khi xóa lead:", error);
+        }
+    }
+
+    let currentLeadCategory = 'all';
+
+    function filterLeadsByCategory() {
+        currentLeadCategory = document.getElementById('lead-category-filter').value;
+        filterLeadsTable();
+    }
+
+    function filterLeadsTable() {
+        const query = document.getElementById('leads-search').value.toLowerCase().trim();
+        let filtered = leadsData;
+        
+        if (currentLeadFilterType !== 'all') {
+            filtered = filtered.filter(l => l.type === currentLeadFilterType);
+        }
+
+        if (currentLeadCategory !== 'all') {
+            filtered = filtered.filter(l => l.category === currentLeadCategory);
+        }
+        
+        if (query) {
+            filtered = filtered.filter(l => 
+                l.name.toLowerCase().includes(query) || 
+                l.phone.toLowerCase().includes(query) || 
+                l.address.toLowerCase().includes(query)
+            );
+        }
+        renderLeadsTable(filtered);
+    }
+
+    function filterLeadsByType(type) {
+        currentLeadFilterType = type;
+        
+        // Cập nhật giao diện nút filter active
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        if (type === 'all') document.getElementById('lead-filter-all').classList.add('active');
+        else if (type === 'No Website') document.getElementById('lead-filter-noweb').classList.add('active');
+        else if (type === 'Dead Website') document.getElementById('lead-filter-dead').classList.add('active');
+        else if (type === 'Outdated Website') document.getElementById('lead-filter-outdated').classList.add('active');
+        
+        filterLeadsTable();
+    }
+
+    function offerService(name, phone, type) {
+        let scriptStr = "";
+        if (type === 'No Website') {
+            scriptStr = `Mẫu chào hàng Web Mới cho "${name}":\n"Chào anh/chị, em thấy quán/công ty mình hoạt động rất tốt trên Google Maps nhưng chưa có website để khách đặt bàn/xem thông tin. Bên em đang có ưu đãi thiết kế website giới thiệu trọn gói..."`;
+        } else if (type === 'Dead Website') {
+            scriptStr = `Mẫu chào hàng sửa Web Hỏng cho "${name}":\n"Chào anh/chị, em thấy link website của mình trên Google Maps hiện đang bị hỏng/không truy cập được. Việc này làm mất khách hàng tìm kiếm trên mạng. Bên em hỗ trợ khắc phục và làm lại giao diện mới..."`;
+        } else {
+            scriptStr = `Mẫu chào hàng thiết kế lại (Redesign) cho "${name}":\n"Chào anh/chị, website hiện tại của mình đang gặp một số lỗi giao diện trên điện thoại và chưa bảo mật (thiếu HTTPS). Bên em hỗ trợ redesign lại sang giao diện hiện đại, tối ưu SEO để thu hút thêm khách hàng..."`;
+        }
+        alert(scriptStr);
+    }
+</script>
+
+</body>
+</html>
