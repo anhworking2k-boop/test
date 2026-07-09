@@ -14,7 +14,11 @@ from werkzeug.utils import secure_filename
 from lead_analyzer import analyze_csv_leads, is_vietnamese_lead
 
 app = Flask(__name__, template_folder='templates')
-app.config['UPLOAD_FOLDER'] = 'uploads'
+
+# Vercel serverless: only /tmp is writable
+IS_VERCEL = os.environ.get('VERCEL', False)
+UPLOAD_DIR = '/tmp/uploads' if IS_VERCEL else 'uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_DIR
 
 # Tạo thư mục uploads nếu chưa có
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -391,7 +395,7 @@ def delete_lead(name):
 # ==========================================
 import sqlite3
 
-RENTAL_DB = 'rental_shop.db'
+RENTAL_DB = '/tmp/rental_shop.db' if os.environ.get('VERCEL') else 'rental_shop.db'
 
 def init_db_if_not_exists():
     if not os.path.exists(RENTAL_DB):
@@ -676,7 +680,8 @@ def api_demo_delete_dress(dress_id):
     conn.close()
     return jsonify({'success': True, 'message': 'Đã xóa váy thành công!'})
 
+# Khởi tạo DB khi module load (cần thiết cho Vercel serverless)
+init_db_if_not_exists()
+
 if __name__ == '__main__':
-    # Khởi tạo database nếu chưa tồn tại trước khi chạy server
-    init_db_if_not_exists()
     app.run(host='0.0.0.0', port=5000, debug=True)
