@@ -1146,6 +1146,8 @@
             gap: 1rem;
         }
 
+        .mobile-menu-btn { display: none; }
+
         /* ===================== RESPONSIVE ===================== */
         @media (max-width: 1024px) {
             .features-inner { grid-template-columns: repeat(2, 1fr); }
@@ -1157,7 +1159,34 @@
         @media (max-width: 768px) {
             #header { top: 8px; width: calc(100% - 24px); }
             body { padding-top: 80px; }
-            .header-nav { display: none; }
+            
+            /* Mobile Nav Toggle */
+            .mobile-menu-btn { display: flex; align-items: center; justify-content: center; }
+            .header-nav {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: calc(100% + 4px); left: 0; right: 0;
+                background: var(--surface);
+                backdrop-filter: blur(16px);
+                border: 1px solid var(--border-strong);
+                padding: 1.5rem;
+                border-radius: var(--radius-md);
+                gap: 1.25rem;
+                box-shadow: var(--shadow-lg);
+                z-index: 1000;
+                transform-origin: top center;
+                animation: slideDownNav 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            }
+            .header-nav.active { display: flex; }
+            .header-nav a {
+                width: 100%;
+                padding: 0.5rem 0;
+                border-bottom: 1px solid var(--border);
+                font-size: 0.95rem;
+            }
+            .header-nav a:last-child { border-bottom: none; }
+
             .hero { min-height: 70vh; }
             .features-inner { grid-template-columns: 1fr 1fr; }
             .testi-grid { grid-template-columns: 1fr; }
@@ -1170,12 +1199,20 @@
             .features-inner { grid-template-columns: 1fr; }
             .hero-btns { flex-direction: column; }
             .hero-stats { gap: 1.5rem; }
+            .products-grid { grid-template-columns: 1fr; }
+            .logo-sub { display: none; }
+            .logo-text { font-size: 1.2rem; }
+            .btn-cta-header { display: none; }
+        }
+
+        @keyframes slideDownNav {
+            from { opacity: 0; transform: translateY(-8px) scaleY(0.95); }
+            to { opacity: 1; transform: translateY(0) scaleY(1); }
         }
     </style>
 </head>
 <body>
 
-    <!-- ===== HEADER ===== -->
     <div id="header">
         <div class="header-inner">
             <!-- Logo -->
@@ -1188,7 +1225,7 @@
             </div>
 
             <!-- Nav -->
-            <nav class="header-nav">
+            <nav class="header-nav" id="header-nav">
                 <a href="#" class="active">Trang Chủ</a>
                 <a href="#catalog">Sản Phẩm</a>
                 <a href="#catalog" onclick="filterCat('Váy Cưới')">Váy Cưới</a>
@@ -1209,6 +1246,7 @@
                 <a href="/demo/admin" class="btn-cta-header">
                     <i class="fa-solid fa-lock"></i> Quản Lý
                 </a>
+                <button class="icon-btn mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle Navigation"><i class="fa-solid fa-bars"></i></button>
             </div>
         </div>
     </div>
@@ -1631,6 +1669,26 @@
         heroVid.src = 'https://cdn.videvo.net/videvo_files/video/free/2023-05/large_watermarked/230514_07_The_City_1080p_0256_0128_preview.mp4'; // placeholder video
         if (heroBgImg) {
             heroBgImg.parentNode.replaceChild(heroVid, heroBgImg);
+        }
+
+        /* ── Mobile menu toggle ── */
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const headerNav = document.getElementById('header-nav');
+        if (mobileMenuBtn && headerNav) {
+            mobileMenuBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                headerNav.classList.toggle('active');
+            });
+            document.addEventListener('click', (e) => {
+                if (headerNav.classList.contains('active') && !headerNav.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                    headerNav.classList.remove('active');
+                }
+            });
+            headerNav.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    headerNav.classList.remove('active');
+                });
+            });
         }
 
         /* ── Init ── */
