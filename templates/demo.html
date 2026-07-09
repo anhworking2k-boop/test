@@ -432,7 +432,7 @@
             width: 100%; height: 100%;
             object-fit: cover;
             object-position: center 20%;
-            opacity: 0.28;
+            opacity: 0.45;
         }
         /* Animated gradient orbs */
         .hero-orb {
@@ -1660,16 +1660,7 @@
             });
         }
 
-        /* ── Hero video fallback (image) ── */
-        const heroBgImg = document.querySelector('.hero-bg-img');
-        const heroVid = document.createElement('video');
-        heroVid.className = 'hero-bg-vid';
-        heroVid.autoplay = true; heroVid.muted = true; heroVid.loop = true; heroVid.playsInline = true;
-        heroVid.style.position = 'absolute'; heroVid.style.inset = '0'; heroVid.style.width = '100%'; heroVid.style.height = '100%'; heroVid.style.objectFit = 'cover'; heroVid.style.opacity = '0.28';
-        heroVid.src = 'https://cdn.videvo.net/videvo_files/video/free/2023-05/large_watermarked/230514_07_The_City_1080p_0256_0128_preview.mp4'; // placeholder video
-        if (heroBgImg) {
-            heroBgImg.parentNode.replaceChild(heroVid, heroBgImg);
-        }
+
 
         /* ── Mobile menu toggle ── */
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
