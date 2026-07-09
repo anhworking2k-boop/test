@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import os
 import re
+import time
+import requests
 from flask import Flask, render_template, jsonify, request, Response, redirect
 from werkzeug.utils import secure_filename
 
@@ -283,12 +285,22 @@ def init_db_if_not_exists():
         
         # Seed dữ liệu váy cưới mẫu cho Chérie Dress
         dresses_data = [
-            ("Váy Cưới Trễ Vai Satin Trắng (Chérie Signature)", "Váy Cưới", "M", "Trắng", 800000, 3000000, "https://images.unsplash.com/photo-1594552072238-b8a33785b261?auto=format&fit=crop&q=80&w=600", "Sẵn sàng"),
-            ("Đầm Dạ Hội Kim Sa Đỏ Quyến Rũ", "Váy Dạ Hội", "S", "Đỏ", 350000, 1500000, "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&q=80&w=600", "Sẵn sàng"),
-            ("Đầm Dạ Hội Cúp Ngực Đen Huyền Bí", "Váy Dạ Hội", "M", "Đen", 300000, 1200000, "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&q=80&w=600", "Sẵn sàng"),
-            ("Áo Dài Ăn Hỏi Gấm Đỏ Truyền Thống", "Váy Ăn Hỏi", "L", "Đỏ", 250000, 1000000, "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&q=80&w=600", "Sẵn sàng"),
-            ("Đầm Công Chúa Xoè Bồng Trắng Tinh Khôi", "Váy Dạ Hội", "S", "Trắng", 400000, 2000000, "https://images.unsplash.com/photo-1518049362265-d5b2a6467637?auto=format&fit=crop&q=80&w=600", "Sẵn sàng"),
-            ("Váy Dạ Hội Đính Đá Sparkle Pink", "Váy Dạ Hội", "M", "Hồng", 450000, 2000000, "https://images.unsplash.com/photo-1549064482-6779ba3292fe?auto=format&fit=crop&q=80&w=600", "Sẵn sàng")
+            ("Váy cổ đổ đen nhún bụng BYDI", "Váy Body", "M", "Đen", 250000, 1000000, "https://thuevay.vn/wp-content/uploads/2026/01/IMG_0554-667x800.jpg", "Sẵn sàng"),
+            ("Váy cổ đổ trắng DZUNG BEIZ", "Váy Body", "S", "Trắng", 300000, 1200000, "https://thuevay.vn/wp-content/uploads/2026/01/IMG_2477-667x800.jpg", "Sẵn sàng"),
+            ("Váy đen quây xoè tầng PARAMO", "Váy Xòe", "M", "Đen", 350000, 1500000, "https://thuevay.vn/wp-content/uploads/2026/01/IMG_2603-667x800.jpg", "Sẵn sàng"),
+            ("Váy đen trễ vai xẻ đùi BYDI", "Váy Body", "S", "Đen", 280000, 1200000, "https://thuevay.vn/wp-content/uploads/2026/01/IMG_1323-667x800.jpg", "Sẵn sàng"),
+            ("Áo dài thêu hoa màu xanh pastel", "Áo Dài", "L", "Trắng", 200000, 800000, "https://thuevay.vn/wp-content/uploads/2024/12/338146273_759679602404017_2943694123853596028_n.jpg", "Sẵn sàng"),
+            ("Set áo cổ yếm chân váy ren hoa", "Set", "M", "Kem", 220000, 900000, "https://thuevay.vn/wp-content/uploads/2025/12/IMG_8542-e1764754743347.jpg", "Sẵn sàng"),
+            ("Váy body nhũ bạc lấp lánh", "Váy Body", "S", "Trắng", 320000, 1500000, "https://thuevay.vn/wp-content/uploads/2025/12/490192212_641490972060782_8900130820694787555_n-1.jpg", "Sẵn sàng"),
+            ("Váy xòe hồng xếp ly công chúa", "Váy Xòe", "M", "Hồng", 260000, 1000000, "https://thuevay.vn/wp-content/uploads/2025/12/486637213_122193607562102890_6066223404235449123_n-1.jpg", "Sẵn sàng"),
+            ("Váy quây dạ hội đỏ nhung quý phái", "Váy Xòe", "S", "Đỏ", 380000, 1800000, "https://thuevay.vn/wp-content/uploads/2026/01/IMG_0186-667x800.jpg", "Sẵn sàng"),
+            ("Váy cưới xòe hoa bồng bềnh công chúa", "Váy Xòe", "M", "Trắng", 800000, 3000000, "https://thuevay.vn/wp-content/uploads/2026/01/IMG_2583-667x800.jpg", "Sẵn sàng"),
+            ("Áo dài đỏ gấm hoa cúc chìm", "Áo Dài", "M", "Đỏ", 240000, 1000000, "https://thuevay.vn/wp-content/uploads/2024/12/338146273_759679602404017_2943694123853596028_n.jpg", "Sẵn sàng"),
+            ("Set áo hai dây tơ tằm chân váy xòe", "Set", "S", "Kem", 250000, 1000000, "https://thuevay.vn/wp-content/uploads/2025/12/IMG_8542-e1764754743347.jpg", "Sẵn sàng"),
+            ("Váy body đen cúp ngực quyến rũ", "Váy Body", "L", "Đen", 290000, 1200000, "https://thuevay.vn/wp-content/uploads/2026/01/IMG_1323-667x800.jpg", "Sẵn sàng"),
+            ("Váy xòe hồng lệch vai quyến rũ", "Váy Xòe", "M", "Hồng", 270000, 1100000, "https://thuevay.vn/wp-content/uploads/2025/12/486637213_122193607562102890_6066223404235449123_n-1.jpg", "Sẵn sàng"),
+            ("Váy body đỏ trễ vai ôm dáng", "Váy Body", "S", "Đỏ", 310000, 1300000, "https://thuevay.vn/wp-content/uploads/2026/01/IMG_0186-667x800.jpg", "Sẵn sàng"),
+            ("Áo dài lụa trắng trơn tinh khôi", "Áo Dài", "M", "Trắng", 180000, 800000, "https://thuevay.vn/wp-content/uploads/2024/12/338146273_759679602404017_2943694123853596028_n.jpg", "Sẵn sàng")
         ]
         cursor.executemany('''
         INSERT INTO dresses (name, category, size, color, price, deposit, image_url, status)
@@ -354,8 +366,10 @@ def api_demo_proxy_image():
         if res.status_code == 200:
             return Response(res.content, mimetype=res.headers.get('Content-Type', 'image/jpeg'))
         else:
+            print(f"[Proxy Error] Status {res.status_code} for URL: {img_url}")
             return redirect('https://images.unsplash.com/photo-1594552072238-b8a33785b261?auto=format&fit=crop&q=80&w=600')
     except Exception as e:
+        print(f"[Proxy Exception] {e} for URL: {img_url}")
         return redirect('https://images.unsplash.com/photo-1594552072238-b8a33785b261?auto=format&fit=crop&q=80&w=600')
 
 @app.route('/api/demo/bookings', methods=['POST'])
