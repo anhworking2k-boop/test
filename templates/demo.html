@@ -1097,9 +1097,21 @@
 
         /* ===================== PRODUCT GRID ===================== */
         .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
             gap: 1.5rem;
+        }
+        .products-grid .product-card {
+            flex: 0 1 calc(33.333% - 1rem);
+            min-width: 220px;
+            max-width: 320px;
+        }
+        @media (max-width: 900px) {
+            .products-grid .product-card { flex: 0 1 calc(50% - 0.75rem); }
+        }
+        @media (max-width: 540px) {
+            .products-grid .product-card { flex: 0 1 calc(50% - 0.5rem); min-width: 150px; }
         }
 
         .product-card {
@@ -1629,6 +1641,45 @@
         }
         @keyframes ripple { from { transform: scale(1); opacity: 0.7; } to { transform: scale(1.75); opacity: 0; } }
 
+        /* Scroll to top button */
+        .scroll-top-btn {
+            position: fixed;
+            bottom: 2rem; right: 2rem;
+            z-index: 999;
+            width: 46px; height: 46px;
+            border-radius: 50%;
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            color: var(--text-2);
+            font-size: 1rem;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: var(--shadow-md);
+            cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(12px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .scroll-top-btn.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+        .scroll-top-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        .scroll-top-btn:hover i {
+            animation: bounce-up 0.4s ease;
+        }
+        @keyframes bounce-up {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
         /* ===================== FOOTER ===================== */
         footer {
             background: var(--primary-3);
@@ -1852,18 +1903,25 @@
             .price-amount { font-size: 0.9rem; }
             .price-note { font-size: 0.65rem; }
 
-            /* Floating Contact Buttons Vertical layout on Mobile as requested */
+            /* Floating Contact – Left side on mobile */
             .floating-contact {
-                left: auto;
-                right: 1rem;
+                left: 0.85rem;
+                right: auto;
                 bottom: 1rem;
                 flex-direction: column;
-                gap: 0.6rem;
+                gap: 0.55rem;
             }
             .float-btn {
-                width: 40px;
-                height: 40px;
+                width: 42px;
+                height: 42px;
                 font-size: 1rem;
+            }
+            /* Scroll to top – smaller on mobile */
+            .scroll-top-btn {
+                bottom: 1rem;
+                right: 0.85rem;
+                width: 38px; height: 38px;
+                font-size: 0.9rem;
             }
 
             .banner-slider-section {
@@ -2500,7 +2558,7 @@
         <span id="toast-msg">Thông báo</span>
     </div>
 
-    <!-- Floating contact -->
+    <!-- Floating contact (LEFT) -->
     <div class="floating-contact">
         <a href="https://zalo.me/0332699103" target="_blank" class="float-btn zalo" title="Chat Zalo">
             <img src="/static/images/zalo_icon.png" alt="Zalo" style="width: 100%; height: 100%; object-fit: contain; border-radius: 50%;">
@@ -2512,6 +2570,11 @@
             <i class="fa-solid fa-phone"></i>
         </a>
     </div>
+
+    <!-- Scroll to Top (RIGHT) -->
+    <button class="scroll-top-btn" id="scroll-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Lên đầu trang">
+        <i class="fa-solid fa-chevron-up"></i>
+    </button>
 
     <!-- ===== JS ===== -->
     <!-- Flatpickr JS -->
@@ -2590,9 +2653,11 @@
             document.getElementById('grand-popup').classList.add('show');
         }, 800);
 
-        /* ── Header scroll effect ── */
+        /* ── Header scroll effect + Scroll-to-top ── */
         window.addEventListener('scroll', () => {
             document.getElementById('header').classList.toggle('scrolled', window.scrollY > 60);
+            const btn = document.getElementById('scroll-top-btn');
+            if (btn) btn.classList.toggle('visible', window.scrollY > 300);
         });
 
 
