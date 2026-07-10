@@ -1514,6 +1514,13 @@
         .btn-close-drawer:hover { background: rgba(255,255,255,0.3); }
 
         .drawer-body { padding: 1.5rem; flex: 1; overflow-y: auto; }
+        .drawer-footer {
+            padding: 1rem 1.5rem;
+            padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+            border-top: 1px solid var(--border);
+            background: var(--surface);
+            flex-shrink: 0;
+        }
         .form-group { margin-bottom: 1.2rem; }
         .form-group label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--text-2); margin-bottom: 0.45rem; text-transform: uppercase; letter-spacing: 0.04em; }
         .form-input {
@@ -1671,8 +1678,26 @@
             max-width: 1320px; margin: 0 auto;
             padding: 1.5rem 2rem;
             display: flex; justify-content: space-between;
-            font-size: 0.78rem; color: rgba(255,255,255,0.3);
+            font-size: 0.78rem; color: rgba(255,255,255,0.45);
             gap: 1rem;
+            align-items: center;
+        }
+        .footer-credit {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-weight: 600;
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.55);
+            letter-spacing: 0.01em;
+        }
+        .footer-credit strong {
+            background: linear-gradient(90deg, #f9a8d4, #c084fc, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            letter-spacing: 0.02em;
         }
 
         .mobile-menu-btn { display: none; }
@@ -2380,7 +2405,7 @@
         </div>
         <div class="footer-bottom">
             <span>© 2026 Chérie Dress. All rights reserved.</span>
-            <span>Designed by Antigravity AI</span>
+            <span class="footer-credit">✨ Designed by <strong>anhcoming</strong></span>
         </div>
     </footer>
 
