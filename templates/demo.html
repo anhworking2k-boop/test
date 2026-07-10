@@ -1636,68 +1636,60 @@
         }
         .footer-top {
             max-width: 1320px; margin: 0 auto;
-            padding: 4rem 2rem 2rem;
+            padding: 3rem 2rem 1.5rem;
             display: grid;
             grid-template-columns: 1.5fr 1fr 1fr;
-            gap: 3rem;
+            gap: 2.5rem;
         }
-        .footer-brand .logo-text { font-size: 1.5rem; color: #fff; margin-bottom: 0.8rem; }
-        .footer-desc { font-size: 0.85rem; line-height: 1.75; color: rgba(255,255,255,0.55); margin-bottom: 1.5rem; max-width: 320px; }
-        .footer-social { display: flex; gap: 0.6rem; }
+        .footer-brand .logo-text { font-size: 1.4rem; color: #fff; margin-bottom: 0.6rem; }
+        .footer-desc { font-size: 0.82rem; line-height: 1.65; color: rgba(255,255,255,0.5); margin-bottom: 1.25rem; max-width: 280px; }
+        .footer-social { display: flex; gap: 1rem; align-items: center; }
         .soc-btn {
-            width: 34px; height: 34px;
-            border-radius: 50%;
-            border: 1px solid rgba(255,255,255,0.2);
-            display: flex; align-items: center; justify-content: center;
-            color: rgba(255,255,255,0.6);
-            font-size: 0.85rem;
-            transition: all 0.2s;
+            color: rgba(255,255,255,0.65);
+            font-size: 1rem;
+            transition: color 0.2s, transform 0.2s;
+            line-height: 1;
         }
-        .soc-btn:hover { background: var(--primary); border-color: var(--primary); color: #fff; }
+        .soc-btn:hover { color: #fff; transform: translateY(-2px); }
 
         .footer-col h5 {
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.12em;
-            color: #fff;
-            margin-bottom: 1.2rem;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 1rem;
         }
-        .footer-col ul { display: flex; flex-direction: column; gap: 0.55rem; }
+        .footer-col ul { display: flex; flex-direction: column; gap: 0.45rem; }
         .footer-col ul a {
-            font-size: 0.84rem;
-            color: rgba(255,255,255,0.5);
+            font-size: 0.82rem;
+            color: rgba(255,255,255,0.45);
             display: flex; align-items: center; gap: 0.4rem;
             transition: all 0.2s;
         }
-        .footer-col ul a i { font-size: 0.7rem; color: var(--accent); width: 12px; }
+        .footer-col ul a i { font-size: 0.65rem; color: rgba(255,255,255,0.35); width: 10px; }
         .footer-col ul a:hover { color: #fff; padding-left: 4px; }
 
         .footer-bottom {
             border-top: 1px solid rgba(255,255,255,0.08);
             max-width: 1320px; margin: 0 auto;
-            padding: 1.5rem 2rem;
+            padding: 1.1rem 2rem;
             display: flex; justify-content: space-between;
-            font-size: 0.78rem; color: rgba(255,255,255,0.45);
+            font-size: 0.75rem; color: rgba(255,255,255,0.35);
             gap: 1rem;
             align-items: center;
         }
         .footer-credit {
             display: inline-flex;
             align-items: center;
-            gap: 0.35rem;
-            font-weight: 600;
-            font-size: 0.78rem;
-            color: rgba(255,255,255,0.55);
-            letter-spacing: 0.01em;
+            gap: 0.3rem;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.4);
         }
         .footer-credit strong {
-            background: linear-gradient(90deg, #f9a8d4, #c084fc, #818cf8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: rgba(255,255,255,0.85);
             font-weight: 700;
-            letter-spacing: 0.02em;
+            letter-spacing: 0.01em;
         }
 
         .mobile-menu-btn { display: none; }
@@ -2405,7 +2397,7 @@
         </div>
         <div class="footer-bottom">
             <span>© 2026 Chérie Dress. All rights reserved.</span>
-            <span class="footer-credit">✨ Designed by <strong>anhcoming</strong></span>
+            <span class="footer-credit"><i class="fa-solid fa-code" style="font-size:0.65rem;"></i> by <strong>anhcoming</strong></span>
         </div>
     </footer>
 
