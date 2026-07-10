@@ -490,37 +490,135 @@
             }
         }
 
+        /* ===== MOBILE CARD VIEW for bookings ===== */
+        .booking-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .booking-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+        .booking-card-customer { display: flex; flex-direction: column; gap: 0.1rem; }
+        .booking-card-name { font-weight: 700; font-size: 0.9rem; color: var(--text-main); }
+        .booking-card-phone { font-size: 0.78rem; color: var(--text-muted); }
+        .booking-card-dress {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.6rem;
+            background: var(--bg-color);
+            border-radius: 8px;
+            margin-bottom: 0.6rem;
+        }
+        .booking-card-dress img { width: 44px; height: 44px; border-radius: 6px; object-fit: cover; border: 1px solid var(--border-color); }
+        .booking-card-dress-name { font-size: 0.82rem; font-weight: 600; color: var(--text-sub); }
+        .booking-card-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.4rem 0.75rem;
+            margin-bottom: 0.6rem;
+        }
+        .booking-card-meta-item { display: flex; flex-direction: column; gap: 0.1rem; }
+        .booking-card-meta-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 600; }
+        .booking-card-meta-value { font-size: 0.82rem; font-weight: 600; color: var(--text-sub); }
+        .booking-card-meta-value.price { color: var(--primary-color); }
+        .booking-card-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem; }
+        .booking-card-actions .btn-action {
+            flex: 1;
+            min-width: 0;
+            height: 36px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            gap: 0.35rem;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .booking-card-actions .btn-action span { font-size: 0.75rem; }
+
+        /* ===== MOBILE OVERRIDES ===== */
         @media (max-width: 576px) {
             .stats-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.65rem;
             }
+            .stat-card {
+                padding: 1rem;
+            }
+            .stat-info .value { font-size: 1.35rem; }
+            .stat-info h3 { font-size: 0.65rem; }
+            .stat-icon { width: 38px; height: 38px; font-size: 1rem; border-radius: 10px; }
 
             .top-bar {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
+                flex-direction: row;
+                align-items: center;
+                gap: 0.5rem;
+                margin-bottom: 1.25rem;
             }
+            .top-bar-left h1 { font-size: 1.2rem; }
+            .top-bar-left p { display: none; }
 
             .btn-view-lookbook {
-                width: 100%;
-                justify-content: center;
+                padding: 0.5rem 0.8rem;
+                font-size: 0.75rem;
+                white-space: nowrap;
             }
 
-            .panel-header {
+            .panel-card-header {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 0.75rem;
+                gap: 0.6rem;
             }
-
-            .panel-header .btn-primary {
+            .panel-card-header .btn-view-lookbook {
                 width: 100%;
                 justify-content: center;
             }
 
-            .modal-content {
-                padding: 1.5rem;
-                margin: 1rem;
+            /* Hide desktop table on mobile, show cards */
+            .table-responsive-hide { display: none; }
+
+            /* Modal: full bottom sheet on mobile */
+            .modal {
+                align-items: flex-end;
+                padding: 0;
             }
+            .modal-content {
+                max-width: 100%;
+                border-radius: 20px 20px 0 0;
+                max-height: 90vh;
+                overflow-y: auto;
+                transform: translateY(100%);
+            }
+            .modal.active .modal-content {
+                transform: translateY(0);
+            }
+            .modal-header {
+                position: sticky;
+                top: 0;
+                z-index: 10;
+                background: var(--card-bg);
+                border-radius: 20px 20px 0 0;
+            }
+            .modal-header::before {
+                content: '';
+                display: block;
+                width: 40px; height: 4px;
+                background: var(--border-color);
+                border-radius: 99px;
+                margin: 0 auto 1rem;
+            }
+
+            /* Form single column on mobile */
+            .form-row { grid-template-columns: 1fr; gap: 0; }
+
+            /* Dashboard charts stack */
+            .dashboard-details { grid-template-columns: 1fr; gap: 0.75rem; }
         }
 
         /* ===== MODAL ===== */
@@ -729,7 +827,8 @@
                     <div class="panel-card-header">
                         <h2><i class="fa-solid fa-list-check"></i> Đơn Đặt Lịch & Lịch Trình</h2>
                     </div>
-                    <div class="table-container">
+                    <!-- Desktop table -->
+                    <div class="table-container table-responsive-hide">
                         <table>
                             <thead>
                                 <tr>
@@ -747,6 +846,8 @@
                             </tbody>
                         </table>
                     </div>
+                    <!-- Mobile cards -->
+                    <div id="bookings-cards-mobile" style="display:none;"></div>
                 </div>
 
                 <!-- Revenue Chart -->
@@ -1038,23 +1139,39 @@
             }
         }
 
+        const isMobile = () => window.innerWidth <= 576;
+
         async function loadBookings() {
             const tbody = document.getElementById('bookings-table-body');
+            const cardsContainer = document.getElementById('bookings-cards-mobile');
+
+            // Show correct view based on screen size
+            const tableWrap = tbody.closest('.table-container');
+            if (isMobile()) {
+                if (tableWrap) tableWrap.style.display = 'none';
+                cardsContainer.style.display = 'block';
+            } else {
+                if (tableWrap) tableWrap.style.display = 'block';
+                cardsContainer.style.display = 'none';
+            }
+
             tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem;"><i class="fa-solid fa-spinner fa-spin" style="font-size: 1.5rem;"></i> Đang tải dữ liệu đơn hàng...</td></tr>';
+            cardsContainer.innerHTML = '<div style="text-align:center;padding:2rem;"><i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem;"></i></div>';
             
             try {
                 const response = await fetch('/api/demo/admin/bookings');
                 bookingsData = await response.json();
                 
                 tbody.innerHTML = '';
+                cardsContainer.innerHTML = '';
+
                 if (bookingsData.length === 0) {
                     tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">Chưa có đơn đặt lịch nào trên hệ thống.</td></tr>';
+                    cardsContainer.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:2rem;">Chưa có đơn đặt lịch nào.</p>';
                     return;
                 }
 
                 bookingsData.forEach(booking => {
-                    const tr = document.createElement('tr');
-                    
                     // Trạng thái đơn đặt
                     let statusBadgeHtml = '';
                     if (booking.status === 'Chờ duyệt') {
@@ -1070,18 +1187,20 @@
                     // Trạng thái thanh toán
                     let paymentBadgeHtml = '';
                     if (booking.payment_status === 'Đã cọc') {
-                        paymentBadgeHtml = '<span class="badge badge-warning" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3);">Mới Cọc</span>';
+                        paymentBadgeHtml = '<span class="badge badge-warning" style="background:rgba(245,158,11,0.1);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);">Mới Cọc</span>';
                     } else if (booking.payment_status === 'Đã thanh toán hết') {
-                        paymentBadgeHtml = '<span class="badge badge-success" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3);">Hoàn Tất</span>';
+                        paymentBadgeHtml = '<span class="badge badge-success" style="background:rgba(16,185,129,0.1);color:#10b981;border:1px solid rgba(16,185,129,0.3);">Hoàn Tất</span>';
                     } else {
                         paymentBadgeHtml = '<span class="badge badge-danger">Chưa Trả Tiền</span>';
                     }
 
                     let displayImg = booking.dress_image;
-                    if (displayImg.startsWith('http')) {
+                    if (displayImg && displayImg.startsWith('http')) {
                         displayImg = `/api/demo/proxy-image?url=${encodeURIComponent(displayImg)}`;
                     }
 
+                    // ===== DESKTOP TABLE ROW =====
+                    const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td>
                             <div class="customer-info">
@@ -1095,33 +1214,81 @@
                                 <span style="font-weight: 500;">${booking.dress_name}</span>
                             </div>
                         </td>
-                        <td>
-                            <span class="date-badge">${formatDate(booking.start_date)} &rarr; ${formatDate(booking.end_date)}</span>
-                        </td>
+                        <td><span class="date-badge">${formatDate(booking.start_date)} &rarr; ${formatDate(booking.end_date)}</span></td>
                         <td style="font-weight: 700; color: var(--primary-color);">${formatMoney(booking.total_price)}</td>
                         <td>${statusBadgeHtml}</td>
                         <td>${paymentBadgeHtml}</td>
                         <td>
                             <div class="actions-cell">
-                                ${booking.status === 'Chờ duyệt' ? 
-                                    `<button class="btn-action success" onclick="updateStatus(${booking.id}, 'Đang thuê')" title="Duyệt bàn giao váy cho khách"><i class="fa-solid fa-check"></i></button>` : ''
-                                }
-                                ${booking.status === 'Đang thuê' ? 
-                                    `<button class="btn-action success" onclick="updateStatus(${booking.id}, 'Đã trả')" title="Xác nhận khách trả váy và hoàn cọc"><i class="fa-solid fa-rotate-left"></i></button>` : ''
-                                }
-                                ${booking.payment_status === 'Đã cọc' ? 
-                                    `<button class="btn-action info" onclick="updatePaymentStatus(${booking.id}, 'Đã thanh toán hết')" title="Thu nốt tiền thuê khi trả váy"><i class="fa-solid fa-money-bill-wave"></i></button>` : ''
-                                }
+                                ${booking.status === 'Chờ duyệt' ? `<button class="btn-action success" onclick="updateStatus(${booking.id}, 'Đang thuê')" title="Duyệt bàn giao váy"><i class="fa-solid fa-check"></i></button>` : ''}
+                                ${booking.status === 'Đang thuê' ? `<button class="btn-action success" onclick="updateStatus(${booking.id}, 'Đã trả')" title="Xác nhận trả váy"><i class="fa-solid fa-rotate-left"></i></button>` : ''}
+                                ${booking.payment_status === 'Đã cọc' ? `<button class="btn-action info" onclick="updatePaymentStatus(${booking.id}, 'Đã thanh toán hết')" title="Thu nốt tiền thuê"><i class="fa-solid fa-money-bill-wave"></i></button>` : ''}
                             </div>
                         </td>
                     `;
                     tbody.appendChild(tr);
+
+                    // ===== MOBILE CARD =====
+                    const actionsBtns = [];
+                    if (booking.status === 'Chờ duyệt') {
+                        actionsBtns.push(`<button class="btn-action success" onclick="updateStatus(${booking.id}, 'Đang thuê')"><i class="fa-solid fa-check"></i><span>Duyệt váy</span></button>`);
+                    }
+                    if (booking.status === 'Đang thuê') {
+                        actionsBtns.push(`<button class="btn-action success" onclick="updateStatus(${booking.id}, 'Đã trả')"><i class="fa-solid fa-rotate-left"></i><span>Trả váy</span></button>`);
+                    }
+                    if (booking.payment_status === 'Đã cọc') {
+                        actionsBtns.push(`<button class="btn-action info" onclick="updatePaymentStatus(${booking.id}, 'Đã thanh toán hết')"><i class="fa-solid fa-money-bill-wave"></i><span>Thu tiền</span></button>`);
+                    }
+
+                    const card = document.createElement('div');
+                    card.className = 'booking-card';
+                    card.innerHTML = `
+                        <div class="booking-card-header">
+                            <div class="booking-card-customer">
+                                <span class="booking-card-name">${booking.customer_name}</span>
+                                <span class="booking-card-phone"><i class="fa-solid fa-phone" style="font-size:0.65rem;"></i> ${booking.customer_phone}</span>
+                            </div>
+                            <div style="display:flex;gap:0.4rem;flex-shrink:0;">${statusBadgeHtml}${paymentBadgeHtml}</div>
+                        </div>
+                        <div class="booking-card-dress">
+                            <img src="${displayImg}" alt="${booking.dress_name}">
+                            <span class="booking-card-dress-name">${booking.dress_name}</span>
+                        </div>
+                        <div class="booking-card-meta">
+                            <div class="booking-card-meta-item">
+                                <span class="booking-card-meta-label">Ngày nhận</span>
+                                <span class="booking-card-meta-value">${formatDate(booking.start_date)}</span>
+                            </div>
+                            <div class="booking-card-meta-item">
+                                <span class="booking-card-meta-label">Ngày trả</span>
+                                <span class="booking-card-meta-value">${formatDate(booking.end_date)}</span>
+                            </div>
+                            <div class="booking-card-meta-item">
+                                <span class="booking-card-meta-label">Tổng tiền</span>
+                                <span class="booking-card-meta-value price">${formatMoney(booking.total_price)}</span>
+                            </div>
+                            <div class="booking-card-meta-item">
+                                <span class="booking-card-meta-label">Số ngày</span>
+                                <span class="booking-card-meta-value">${booking.days || '-'} ngày</span>
+                            </div>
+                        </div>
+                        ${actionsBtns.length > 0 ? `<div class="booking-card-actions">${actionsBtns.join('')}</div>` : ''}
+                    `;
+                    cardsContainer.appendChild(card);
                 });
             } catch (error) {
                 console.error("Lỗi khi tải danh sách đặt lịch:", error);
                 tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--accent-danger);">Lỗi kết nối máy chủ.</td></tr>';
+                cardsContainer.innerHTML = '<p style="text-align:center;color:var(--accent-danger);padding:2rem;">Lỗi kết nối máy chủ.</p>';
             }
         }
+
+        // Re-render on resize
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => loadBookings(), 200);
+        });
 
         async function updateStatus(bookingId, newStatus) {
             try {
