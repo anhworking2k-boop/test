@@ -1478,14 +1478,13 @@
         }
         .float-btn:hover { transform: scale(1.12) translateY(-2px); box-shadow: var(--shadow-lg); }
         .float-btn.zalo {
-            background: #ffffff;
-            color: #0068ff;
-            border: 1px solid rgba(0, 104, 255, 0.2);
-            box-shadow: 0 4px 16px rgba(0, 104, 255, 0.12);
+            background: transparent;
+            border: none;
+            box-shadow: var(--shadow-md);
+            padding: 0;
         }
         .float-btn.zalo:hover {
-            border-color: #0068ff;
-            box-shadow: 0 6px 20px rgba(0, 104, 255, 0.25);
+            box-shadow: var(--shadow-lg);
         }
         .float-btn.messenger { background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%); }
         .float-btn.phone {
@@ -1714,13 +1713,13 @@
             .price-amount { font-size: 0.9rem; }
             .price-note { font-size: 0.65rem; }
 
-            /* Floating Contact Buttons Horizontal row on Mobile to save vertical space */
+            /* Floating Contact Buttons Vertical layout on Mobile as requested */
             .floating-contact {
                 left: auto;
                 right: 1rem;
                 bottom: 1rem;
-                flex-direction: row;
-                gap: 0.5rem;
+                flex-direction: column;
+                gap: 0.6rem;
             }
             .float-btn {
                 width: 40px;
@@ -2327,11 +2326,7 @@
     <!-- Floating contact -->
     <div class="floating-contact">
         <a href="https://zalo.me/0332699103" target="_blank" class="float-btn zalo" title="Chat Zalo">
-            <svg viewBox="0 0 200 200" width="34" height="34" style="display: block;">
-                <path d="M 68.7,30.5 C 50.1,55.2 46.2,106.1 70.8,145.4 C 65.3,142.1 59.2,143.5 56.4,146.1 C 41.2,150.3 36.1,154.5 36.1,154.5 C 36.1,154.5 46.2,146.1 50.2,136.2 C 31.4,110.1 28.7,65.3 68.7,30.5 Z" fill="#0068ff"/>
-                <path d="M 61.4,144.1 C 82.5,152.3 108.7,152.1 138.4,145.1 C 112.5,154.9 84.1,152.2 61.4,144.1 Z" fill="#0068ff"/>
-                <text x="66" y="114" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="52" fill="#0068ff" letter-spacing="-3">Zalo</text>
-            </svg>
+            <img src="/static/images/zalo_icon.png" alt="Zalo" style="width: 100%; height: 100%; object-fit: contain; border-radius: 50%;">
         </a>
         <a href="https://m.me/cheriedress" target="_blank" class="float-btn messenger" title="Chat Messenger">
             <i class="fa-brands fa-facebook-messenger"></i>
